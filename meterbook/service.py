@@ -4,7 +4,7 @@ from meterbook.values import fields, reject, MeterError
 from meterbook.contracts import registry, rates, simulation, calendar, budgets
 from meterbook.events import receiver, reconcile, disputes, recovery
 from meterbook.settlement import pricing, invoices, payments, credits, campaigns, costcenters, preflight
-from meterbook.audit import checks, explanations, anomalies
+from meterbook.audit import checks, explanations, anomalies, monitor
 from meterbook.ports import files, bundles, receipts, transfer, mapping
 from meterbook.audit import closing, verification
 from meterbook.settlement import reviews
@@ -24,6 +24,7 @@ class Meterbook:
         self.imports = mapping.Imports(self.store)
         self.statements = closing.Statements(self.store)
         self.reviews = reviews.Reviews(self.store)
+        self.monitor = monitor.Monitor(self.store)
         self.routes = {}
         modules = {
             'contract': registry, 'rate': rates, 'event': receiver,
@@ -45,6 +46,7 @@ class Meterbook:
             'cost': self.costcenters, 'budget': self.budgets,
             'receipt': self.receipts, 'transfer': self.transfers,
             'import': self.imports, 'statement': self.statements, 'review': self.reviews,
+            'monitor': self.monitor,
         }.items():
             for name, method in inspect.getmembers(service, inspect.ismethod):
                 if not name.startswith('_'):
